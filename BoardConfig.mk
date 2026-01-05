@@ -6,11 +6,10 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-
 BUILD_BROKEN_DUP_RULES := true
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 
-DEVICE_PATH := device/samsung/gtowifi
+DEVICE_PATH := device/samsung/gto
 
 # Platform
 BOARD_VENDOR := samsung
@@ -32,8 +31,8 @@ TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := generic
 TARGET_BOARD_SUFFIX := _64
 
-# Assert
-TARGET_OTA_ASSERT_DEVICE := gtowifi
+# Assert (UPDATED for GTO)
+TARGET_OTA_ASSERT_DEVICE := gto,gtowifi,T295
 
 # Audio
 AUDIO_FEATURE_ENABLED_AHAL_EXT := false
@@ -95,7 +94,7 @@ BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x04000000
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 4076863488
 BOARD_VENDORIMAGE_PARTITION_SIZE := 796917760
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
+BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_COPY_OUT_VENDOR := vendor
@@ -118,10 +117,10 @@ TARGET_FS_CONFIG_GEN := $(DEVICE_PATH)/config.fs
 TARGET_SCREEN_DENSITY := 213
 TARGET_TAP_TO_WAKE_NODE := "/sys/class/touchscreen/touchpanel/tap2wake"
 
-# Kernel
-BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 
+# Kernel (CRITICAL UPDATES)
+BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3
 BOARD_KERNEL_CMDLINE += lpm_levels.sleep_disabled=1 androidboot.bootdevice=7824900.sdhci
-BOARD_KERNEL_CMDLINE += earlycon=msm_serial_dm,0x78B0000 androidboot.usbconfigfs=true 
+BOARD_KERNEL_CMDLINE += earlycon=msm_serial_dm,0x78B0000 androidboot.usbconfigfs=true
 BOARD_KERNEL_CMDLINE += loop.max_part=7 androidboot.fstab_suffix=qcom
 BOARD_KERNEL_CMDLINE += androidboot.boot_devices=soc/7824900.sdhci
 BOARD_INCLUDE_RECOVERY_DTBO := true
@@ -132,7 +131,7 @@ BOARD_KERNEL_PAGESIZE := 2048
 BOARD_KERNEL_OFFSET := 0x00008000
 BOARD_RAMDISK_OFFSET := 0x02000000
 BOARD_KERNEL_TAGS_OFFSET := 0x01e00000
-BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
+BOARD_FLASH_BLOCK_SIZE := 131072
 BOARD_MKBOOTIMG_ARGS := --kernel_offset $(BOARD_KERNEL_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
@@ -142,7 +141,8 @@ BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/samsung/sdm429
-TARGET_KERNEL_CONFIG := lineageos_gtowifi_defconfig
+# IMPORTANT: You must create this file in your kernel source!
+TARGET_KERNEL_CONFIG := lineageos_gto_defconfig
 TARGET_KERNEL_VERSION := 4.9
 
 BOARD_CUSTOM_BOOTIMG := true
@@ -186,7 +186,7 @@ PRODUCT_VENDOR_MOVE_ENABLED := true
 AB_OTA_UPDATER := false
 
 # Vendor files
-include vendor/samsung/gtowifi/BoardConfigVendor.mk
+include vendor/samsung/gto/BoardConfigVendor.mk
 
 # Wifi
 BOARD_HAS_QCOM_WLAN := true
@@ -200,3 +200,12 @@ WIFI_DRIVER_FW_PATH_AP := "ap"
 WIFI_AVOID_IFACE_RESET_MAC_CHANGE := true
 WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
 WPA_SUPPLICANT_VERSION := VER_0_8_X
+
+# ----------------------------------
+# RIL (LTE/SIM Support) - ADDED
+# ----------------------------------
+BOARD_PROVIDES_LIBRIL := true
+TARGET_USES_RIL := true
+BOARD_MODEM_TYPE := ss333
+# This ensures we don't accidentally treat it as wifi-only
+BOARD_HAS_WIFI_ONLY := false
